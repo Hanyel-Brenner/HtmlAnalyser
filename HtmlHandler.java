@@ -27,6 +27,13 @@ public class HtmlHandler {
         return this.inputHtmlBuffer.readLine();
     }
 
+    public void placeMarker() throws IOException{
+        this.inputHtmlBuffer.mark(0);
+    }
+    public void backToMarker() throws IOException{
+        this.inputHtmlBuffer.reset();
+    }
+
     String writeToLocalHTML(String content) throws IOException{
 
         if(content != null && content.length()>0) {

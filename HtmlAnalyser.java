@@ -37,9 +37,7 @@ public class HtmlAnalyser{
         
 
         while(trimmedString != null){
-            //System.out.println(depth);
-            //System.out.println(this.stack);
-            //System.out.println(trimmedString+"!");
+
             type = this.lineParser.categorize(trimmedString);
 
             if(type == LineParser.StringCategory.OPENING_TAG){
@@ -58,10 +56,27 @@ public class HtmlAnalyser{
             if(type == LineParser.StringCategory.TEXT){
                 if(depth > this.max_depth){
                     this.max_depth = depth;
-                    
                     this.text = this.text.replace(0,this.text.length(),trimmedString);
+
+                    //the following if statement might never happen because more than one line pieces of text might no appear in tests. 
+                    this.htmlHandler.placeMarker();
+                    String nextLine = htmlHandler.readFromHTML();
+                    String nextLineTrimmed = lineParser.trimString(nextLine);
+                    if(lineParser.categorize(nextLineTrimmed) == LineParser.StringCategory.TEXT){
+                        while(lineParser.categorize(nextLineTrimmed) == LineParser.StringCategory.TEXT){
+                            this.text = this.text.replace(0,9999,this.text +"!\n"+nextLineTrimmed);
+                            nextLine = htmlHandler.readFromHTML();
+                            nextLineTrimmed = lineParser.trimString(nextLine);
+                        } 
+                        this.htmlHandler.backToMarker(); 
+                    }
+                    else{
+                        this.htmlHandler.backToMarker();
+                    }
+                    //
                 }
             }
+
             if(type == LineParser.StringCategory.MALFORMED){
                 this.status = false;
             }
